@@ -1,0 +1,279 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
+
+@config "../tailwind.config.mjs";
+@import "tailwindcss";
+@import "./design-system.css";
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(56, 70, 97, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #e6edee 0%, #cce0e1 100%);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #cce0e1 0%, #e6edee 100%);
+}
+
+/* Firefox scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #e6edee rgba(56, 70, 97, 0.3);
+}
+
+/* Custom TextArea with auto-resize and beautiful scrollbar */
+.custom-textarea {
+  width: 100%;
+  display: block;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+  transition: height 0.1s ease;
+}
+
+/* Custom scrollbar cho textarea - chỉ xuất hiện khi cần */
+.custom-textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-textarea::-webkit-scrollbar-track {
+  background: rgba(56, 70, 97, 0.2);
+  border-radius: 10px;
+  margin: 4px 0;
+}
+
+.custom-textarea::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #03eaec 0%, #02a8a9 100%);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.custom-textarea::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #02d1d3 0%, #028a8b 100%);
+  box-shadow: 0 0 6px rgba(3, 234, 236, 0.5);
+}
+
+/* Firefox scrollbar */
+.custom-textarea {
+  scrollbar-width: thin;
+  scrollbar-color: #03eaec rgba(56, 70, 97, 0.2);
+}
+
+/* Placeholder styling */
+.custom-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+}
+
+.custom-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Chat Scrollbar - Thanh scroll đẹp hiện đại cho cửa sổ chat */
+.chat-scrollbar::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: linear-gradient(to right,
+      rgba(20, 21, 26, 0.6) 0%,
+      rgba(28, 29, 34, 0.8) 50%,
+      rgba(20, 21, 26, 0.6) 100%);
+  border-radius: 12px;
+  margin: 12px 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg,
+      rgba(228, 229, 231, 0.8) 0%,
+      rgba(228, 229, 231, 0.9) 50%,
+      rgba(228, 229, 231, 0.8) 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(28, 29, 34, 0.8);
+  box-shadow:
+    0 2px 8px rgba(228, 229, 231, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-size: 200% 200%;
+  animation: scrollbar-pulse 3s ease infinite;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg,
+      rgba(64, 150, 255, 1) 0%,
+      rgba(22, 119, 255, 1) 50%,
+      rgba(64, 150, 255, 1) 100%);
+  border: 2px solid rgba(64, 150, 255, 0.3);
+  box-shadow:
+    0 0 16px rgba(22, 119, 255, 0.6),
+    0 0 32px rgba(22, 119, 255, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+  transform: scaleX(1.1);
+  cursor: pointer;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg,
+      rgba(9, 88, 217, 1) 0%,
+      rgba(5, 63, 156, 1) 50%,
+      rgba(9, 88, 217, 1) 100%);
+  box-shadow:
+    0 0 20px rgba(22, 119, 255, 0.8),
+    inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: scaleX(0.95);
+}
+
+/* Animation cho scrollbar */
+@keyframes scrollbar-pulse {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Firefox scrollbar cho chat */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(228, 229, 231, 0.8) rgba(28, 29, 34, 0.6);
+}
+
+/* Smooth scroll behavior */
+.chat-scrollbar {
+  scroll-behavior: smooth;
+}
+
+/* Thêm hiệu ứng khi hover vào container chat */
+.chat-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg,
+      rgba(228, 229, 231, 0.9) 0%,
+      rgba(228, 229, 231, 1) 50%,
+      rgba(228, 229, 231, 1) 100%);
+}
+
+/* Knowledge Base Animations */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(3, 234, 236, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(3, 234, 236, 0.6);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Gradient Utilities for Knowledge Base */
+.gradient-primary {
+  background: linear-gradient(135deg, #03eaec 0%, #02a8a9 100%);
+  color: #0a0b0c;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.gradient-primary:hover {
+  background: linear-gradient(135deg, #02d1d3 0%, #028a8b 100%);
+  box-shadow: 0 4px 20px rgba(3, 234, 236, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Dashed Border Animation */
+.dashed-border {
+  border: 2px dashed #384661;
+  background: #242c3d;
+}
+
+.dashed-border-hover:hover {
+  border-color: #03eaec;
+  background: #2d3548;
+}
+
+/* Status Badge Styles */
+.status-pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.status-running {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.status-completed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.status-failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ==========================
+   React-PDF Search Highlight
+   ========================== */
+.react-pdf__Page__textContent span[data-search-hit="true"] {
+  background-color: rgba(250, 204, 21, 0.7); /* yellow-300 */
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.6);
+  border-radius: 2px;
+}

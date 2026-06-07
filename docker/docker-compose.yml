@@ -1,0 +1,212 @@
+# Cổng host = cổng dev hiện tại + 1
+#   BE: 8889 → 8890 | FE: 2989 → 2990 | Postgres: 3321 → 3322
+#   Redis: 6381 → 6382 | Kafka: 9092 → 9093
+#
+# Chạy từ thư mục docker:
+#   docker compose up -d --build
+#
+# FE: http://localhost:2990 | BE: http://localhost:8890/v1/health
+
+name: e-commercial
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    ports:
+      - "3322:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: mini_shop_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d mini_shop_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6382:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  kafka:
+    image: apache/kafka:3.7.0
+    restart: unless-stopped
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1 || exit 1",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 40s
+
+  be-migrate:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.be
+    restart: "no"
+    env_file:
+      - ../.env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_NAME: mini_shop_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      [
+        "npx",
+        "sequelize-cli",
+        "db:migrate",
+        "--env",
+        "development",
+        "--config",
+        "docker/config_pg.docker.json",
+      ]
+    volumes:
+      - ../src/migrations:/app/src/migrations:ro
+      - ./config_pg.docker.json:/app/docker/config_pg.docker.json:ro
+
+  be:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.be
+    restart: unless-stopped
+    ports:
+      - "8890:8890"
+    env_file:
+      - ../.env
+    environment:
+      NODE_ENV: development
+      AGENT_PORT: "8890"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_NAME: mini_shop_db
+      POSTGRES_SSL_MODE: disabled
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      KAFKA_BROKER: kafka:9092
+      CLIENT_CORS: http://localhost:2990
+      API_BASE_URL: http://localhost:8890
+      FRONTEND_URL_DEV: http://localhost:2990
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      be-migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-fsS",
+          "http://localhost:8890/v1/health",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    volumes:
+      - ../src:/app/src
+
+  be-kafka-worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.be
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      NODE_ENV: development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_NAME: mini_shop_db
+      POSTGRES_SSL_MODE: disabled
+      KAFKA_BROKER: kafka:9092
+    command: ["yarn", "worker:kafka"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      be:
+        condition: service_healthy
+    volumes:
+      - ../src:/app/src
+
+  fe:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.fe
+    restart: unless-stopped
+    ports:
+      - "2990:2990"
+    environment:
+      NODE_ENV: development
+      PORT: "2990"
+      NEXT_PUBLIC_API_SERVER: http://be:8890
+    depends_on:
+      be:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-fsS",
+          "http://localhost:2990/",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - ../web:/app
+      - fe_node_modules:/app/node_modules
+
+volumes:
+  postgres_data:
+  redis_data:
+  fe_node_modules:

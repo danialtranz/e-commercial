@@ -1,0 +1,10 @@
+node_modules
+web/node_modules
+dist
+web/.next
+.git
+.env
+*.md
+src/controllers/public/videos
+src/controllers/public/video_comment
+src/public

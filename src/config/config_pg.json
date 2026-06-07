@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "root",
+    "password": "123456",
+    "database": "mini_shop_db",
+    "port": "3321",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "root",
+    "password": "123456",
+    "database": "mini_shop_db",
+    "host": "localhost",
+    "port": "3306",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "root",
+    "password": "123456",
+    "database": "mini_shop_db",
+    "host": "localhost",
+    "port": "3321",
+    "dialect": "postgres"
+  }
+}
