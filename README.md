@@ -93,7 +93,7 @@ Built for **developers**, **startups**, and **contributors** who want production
 | Sidebar categories, promo banner, featured products grid                  | Product cards, flash-sale pricing, add-to-cart, AI policy chat widget         |
 | <img src="web/public/images/icons/anh1.png" alt="Homepage" width="900" /> | <img src="web/public/images/icons/anh2.png" alt="Product page" width="900" /> |
 
-> Placeholder screenshots — replace image paths when you have real UI captures.
+>
 
 ---
 
